@@ -1,36 +1,12 @@
-/*
- WiFi Web Server LED Blink
-
- A simple web server that lets you blink an LED via the web.
- This sketch will print the IP address of your WiFi Shield (once connected)
- to the Serial monitor. From there, you can open that address in a web browser
- to turn on and off the LED on pin 5.
-
- If the IP address of your shield is yourAddress:
- http://yourAddress/H turns the LED on
- http://yourAddress/L turns it off
-
- This example is written for a network using WPA encryption. For
- WEP or WPA, change the Wifi.begin() call accordingly.
-
- Circuit:
- * WiFi shield attached
- * LED attached to pin 5
-
- created for arduino 25 Nov 2012
- by Tom Igoe
-
-ported for sparkfun esp32 
-31.01.2017 by Jan Hendrik Berlin
- 
- */
-
 #include <WiFi.h>
 
 const char* ssid     = "brisa-1403078";
 const char* password = "1tite2wp";
 
 WiFiServer server(80);
+
+//DECLARAR OS ESTADOS
+bool ledStatus = false;
 
 void setup()
 {
@@ -104,6 +80,9 @@ void loop(){
                 client.print("<style>.modulos{display:flex;flex-wrap: wrap;justify-content: space-around;}.modulo{flex-basis: 32%;margin-bottom:20px;border-radius:5px;}.modulo > h3{margin:0px;color: #fff;font-weight:300;font-size: 1.5rem;padding: 10px 20px;background-color: #381d97;}</style>");
                 client.print("<style>.modulo > ul {margin:0px;padding:10px;list-style: none;}.modulo > ul > li{padding: 5px;font-size: 1.2rem;cursor: pointer;}.modulo > ul > li > a{display: flex;text-decoration: none;color:#222;}.modulo > ul > li:hover{background-color: #eee;}</style>");
                 client.print("<style>.modulo.verde {border: 2px solid darkgreen;}.modulo.verde > h3{background-color: darkgreen;}.modulo.azul {border: 2px solid darkblue;}.modulo.azul > h3{background-color: darkblue;}</style>");
+                client.print("<style>.card {background-color: #313131;color: #fff;padding: 10px 12px;border-radius: 15px;border: solid 2px #000;margin: 15px auto;box-shadow: 0px 0px 10px 0px #8000ff;display: flex;align-content: center;justify-content: center;width: 453px;}</style>");
+                client.print("<style>.comodo{margin: auto 10px;}.estado.off {background-color: #c81919;padding: 5px 10px;border-radius: 5px;box-shadow: 0px 0px 10px 0px #c81919;margin: auto;margin-right: auto;margin-right: 44px;}.ligar{margin: auto 14px;text-decoration: none;color: #fff;background-color: #199119;padding: 5px 10px;border-radius: 5px;}</style>");
+                client.print("<style>.desligar{margin: auto 14px;text-decoration: none;color: #fff;background-color: #c81919;padding: 5px 10px;border-radius: 5px;}.estado.on {background-color: #199119;padding: 5px 10px;border-radius: 5px;box-shadow: 0px 0px 10px 0px #199119;margin: auto;margin-right: auto;margin-right: auto;margin-right: auto;margin-right: 44px;}</style>");
                 //FIM CSS
               client.print("</head>");
               client.print("<body>");
@@ -113,52 +92,38 @@ void loop(){
                 client.print("</header>");
                 client.print("<main class='principal'>");
                   client.print("<div class='conteudo'>");
-                    client.print("<nav class='modulos'>");
-                      client.print("<div class='modulo verde'>");
-                        client.print("<h3>LIGAR LUZES</h3>");
-                        //BOTÕES
-                        client.print("<ul>");
-                          client.print("<li>");
-                            client.print("<a href='/LS'>LIGAR LUZ DA SALA</a>");                            
-                          client.print("</li>");
-                          client.print("<li>");
-                            client.print("<a href='/LC'>LIGAR LUZ DA COZINHA</a>");                            
-                          client.print("</li>");
-                          client.print("<li>");
-                            client.print("<a href='/LQ'>LIGAR LUZ DO QUARTO</a>");                            
-                          client.print("</li>");
-                          client.print("<li>");
-                            client.print("<a href='/LG'>LIGAR LUZ DA GARAGEM</a>");                            
-                          client.print("</li>");
-                          client.print("<li>");
-                            client.print("<a href='/LT'>LIGAR TODAS AS LUZES</a>");                            
-                          client.print("</li>");
-                        client.print("</ul>");
-                        //FIM BOTÕES
-                      client.print("</div>");
-                      client.print("<div class='modulo azul'>");
-                        client.print("<h3>APAGAR LUZES</h3>");
-                        //BOTÕES
-                        client.print("<ul>");
-                          client.print("<li>");
-                            client.print("<a href='/AS'>APAGAR LUZ DA SALA</a>");                            
-                          client.print("</li>");
-                          client.print("<li>");
-                            client.print("<a href='/AC'>APAGAR LUZ DA COZINHA</a>");                            
-                          client.print("</li>");
-                          client.print("<li>");
-                            client.print("<a href='/AQ'>APAGAR LUZ DO QUARTO</a>");                            
-                          client.print("</li>");
-                          client.print("<li>");
-                            client.print("<a href='/AG'>APAGAR LUZ DA GARAGEM</a>");                            
-                          client.print("</li>");
-                          client.print("<li>");
-                            client.print("<a href='/AT'>APAGAR TODAS AS LUZES</a>");                            
-                          client.print("</li>");
-                        client.print("</ul>");
-                        //FIM BOTÕES
-                      client.print("</div>");
-                    client.print("</nav>");
+                  //CARDS
+                    client.print("<div class='card'>");
+                      client.print("<p class='comodo'>LUZ DA SALA</p>");
+                      ledStatus ? client.print("<div class='estado on'>ON</div>") : client.print("<div class='estado off'>OFF</div>");
+                      client.print("<p class='devisor'>|</p>");
+                      client.print("<a class='ligar' href='/LS'>LIGAR</a><br><a class='desligar' href='/AS'>DESLIGAR</a>");
+                    client.print("</div>");
+                    client.print("<div class='card'>");
+                      client.print("<p class='comodo'>LUZ DA COZINHA</p>");
+                      ledStatus ? client.print("<div class='estado on'>ON</div>") : client.print("<div class='estado off'>OFF</div>");
+                      client.print("<p class='devisor'>|</p>");
+                      client.print("<a class='ligar' href='/LC'>LIGAR</a><br><a class='desligar' href='/AC'>DESLIGAR</a>");
+                    client.print("</div>");
+                    client.print("<div class='card'>");
+                      client.print("<p class='comodo'>LUZ DO QUARTO</p>");
+                      ledStatus ? client.print("<div class='estado on'>ON</div>") : client.print("<div class='estado off'>OFF</div>");
+                      client.print("<p class='devisor'>|</p>");
+                      client.print("<a class='ligar' href='/LQ'>LIGAR</a><br><a class='desligar' href='/AQ'>DESLIGAR</a>");
+                    client.print("</div>");
+                    client.print("<div class='card'>");
+                      client.print("<p class='comodo'>LUZ DA GARAGEM</p>");
+                      ledStatus ? client.print("<div class='estado on'>ON</div>") : client.print("<div class='estado off'>OFF</div>");
+                      client.print("<p class='devisor'>|</p>");
+                      client.print("<a class='ligar' href='/LG'>LIGAR</a><br><a class='desligar' href='/AG'>DESLIGAR</a>");
+                    client.print("</div>");
+                    client.print("<div class='card'>");
+                      client.print("<p class='comodo'>TODAS AS LUZES</p>");
+                      ledStatus ? client.print("<div class='estado on'>ON</div>") : client.print("<div class='estado off'>OFF</div>");
+                      client.print("<p class='devisor'>|</p>");
+                      client.print("<a class='ligar' href='/LT'>LIGAR</a><br><a class='desligar' href='/AT'>DESLIGAR</a>");
+                    client.print("</div>");
+                    //FIM CARDS                    
                   client.print("</div>");
                 client.print("</main>");
                 client.print("<footer>");
@@ -180,40 +145,50 @@ void loop(){
 
         // Check to see if the client request was "GET /H" or "GET /L":
         if (currentLine.endsWith("GET /LS")) {
-          digitalWrite(13, HIGH);               
+          ledStatus = true;
+          digitalWrite(13, ledStatus);               
         }
         if (currentLine.endsWith("GET /AS")) {
-          digitalWrite(13, LOW);                
+          ledStatus = false;
+          digitalWrite(13, ledStatus);                
         }
         if (currentLine.endsWith("GET /LC")) {
-          digitalWrite(12, HIGH);               
+          ledStatus = true;
+          digitalWrite(12, ledStatus);               
         }
         if (currentLine.endsWith("GET /AC")) {
-          digitalWrite(12, LOW);                
+          ledStatus = false;
+          digitalWrite(12, ledStatus);                
         }
         if (currentLine.endsWith("GET /LQ")) {
-          digitalWrite(14, HIGH);               
+          ledStatus = true;
+          digitalWrite(14, ledStatus);               
         }
         if (currentLine.endsWith("GET /AQ")) {
-          digitalWrite(14, LOW);                
+          ledStatus = false;
+          digitalWrite(14, ledStatus);                
         }
         if (currentLine.endsWith("GET /LG")) {
-          digitalWrite(27, HIGH);               
+          ledStatus = true;
+          digitalWrite(27, ledStatus);               
         }
         if (currentLine.endsWith("GET /AG")) {
-          digitalWrite(27, LOW);                
+          ledStatus = false;
+          digitalWrite(27, ledStatus);                
         }
         if (currentLine.endsWith("GET /LT")) {
-          digitalWrite(13, HIGH);
-          digitalWrite(12, HIGH);
-          digitalWrite(14, HIGH);
-          digitalWrite(27, HIGH);               
+          ledStatus = true;
+          digitalWrite(13, ledStatus);
+          digitalWrite(12, ledStatus);
+          digitalWrite(14, ledStatus);
+          digitalWrite(27, ledStatus);               
         }
         if (currentLine.endsWith("GET /AT")) {
-          digitalWrite(13, LOW);
-          digitalWrite(12, LOW);
-          digitalWrite(14, LOW);
-          digitalWrite(27, LOW);                
+          ledStatus = false;
+          digitalWrite(13, ledStatus);
+          digitalWrite(12, ledStatus);
+          digitalWrite(14, ledStatus);
+          digitalWrite(27, ledStatus);                
         }
       }
     }
