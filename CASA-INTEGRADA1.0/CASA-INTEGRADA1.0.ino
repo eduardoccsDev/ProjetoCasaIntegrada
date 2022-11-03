@@ -7,6 +7,10 @@ WiFiServer server(80);
 
 //DECLARAR OS ESTADOS
 bool ledStatus = false;
+bool ledStatus2 = false;
+bool ledStatus3 = false;
+bool ledStatus4 = false;
+bool ledStatusT = false;
 
 void setup()
 {
@@ -101,25 +105,25 @@ void loop(){
                     client.print("</div>");
                     client.print("<div class='card'>");
                       client.print("<p class='comodo'>LUZ DA COZINHA</p>");
-                      ledStatus ? client.print("<div class='estado on'>ON</div>") : client.print("<div class='estado off'>OFF</div>");
+                      ledStatus2 ? client.print("<div class='estado on'>ON</div>") : client.print("<div class='estado off'>OFF</div>");
                       client.print("<p class='devisor'>|</p>");
                       client.print("<a class='ligar' href='/LC'>LIGAR</a><br><a class='desligar' href='/AC'>DESLIGAR</a>");
                     client.print("</div>");
                     client.print("<div class='card'>");
                       client.print("<p class='comodo'>LUZ DO QUARTO</p>");
-                      ledStatus ? client.print("<div class='estado on'>ON</div>") : client.print("<div class='estado off'>OFF</div>");
+                      ledStatus3 ? client.print("<div class='estado on'>ON</div>") : client.print("<div class='estado off'>OFF</div>");
                       client.print("<p class='devisor'>|</p>");
                       client.print("<a class='ligar' href='/LQ'>LIGAR</a><br><a class='desligar' href='/AQ'>DESLIGAR</a>");
                     client.print("</div>");
                     client.print("<div class='card'>");
                       client.print("<p class='comodo'>LUZ DA GARAGEM</p>");
-                      ledStatus ? client.print("<div class='estado on'>ON</div>") : client.print("<div class='estado off'>OFF</div>");
+                      ledStatus4 ? client.print("<div class='estado on'>ON</div>") : client.print("<div class='estado off'>OFF</div>");
                       client.print("<p class='devisor'>|</p>");
                       client.print("<a class='ligar' href='/LG'>LIGAR</a><br><a class='desligar' href='/AG'>DESLIGAR</a>");
                     client.print("</div>");
                     client.print("<div class='card'>");
                       client.print("<p class='comodo'>TODAS AS LUZES</p>");
-                      ledStatus ? client.print("<div class='estado on'>ON</div>") : client.print("<div class='estado off'>OFF</div>");
+                      ledStatusT ? client.print("<div class='estado on'>ON</div>") : client.print("<div class='estado off'>OFF</div>");
                       client.print("<p class='devisor'>|</p>");
                       client.print("<a class='ligar' href='/LT'>LIGAR</a><br><a class='desligar' href='/AT'>DESLIGAR</a>");
                     client.print("</div>");
@@ -153,42 +157,42 @@ void loop(){
           digitalWrite(13, ledStatus);                
         }
         if (currentLine.endsWith("GET /LC")) {
-          ledStatus = true;
-          digitalWrite(12, ledStatus);               
+          ledStatus2 = true;
+          digitalWrite(12, ledStatus2);               
         }
         if (currentLine.endsWith("GET /AC")) {
-          ledStatus = false;
-          digitalWrite(12, ledStatus);                
+          ledStatus2 = false;
+          digitalWrite(12, ledStatus2);                
         }
         if (currentLine.endsWith("GET /LQ")) {
-          ledStatus = true;
-          digitalWrite(14, ledStatus);               
+          ledStatus3 = true;
+          digitalWrite(14, ledStatus3);               
         }
         if (currentLine.endsWith("GET /AQ")) {
-          ledStatus = false;
-          digitalWrite(14, ledStatus);                
+          ledStatus3 = false;
+          digitalWrite(14, ledStatus3);                
         }
         if (currentLine.endsWith("GET /LG")) {
-          ledStatus = true;
-          digitalWrite(27, ledStatus);               
+          ledStatus4 = true;
+          digitalWrite(27, ledStatus4);               
         }
         if (currentLine.endsWith("GET /AG")) {
-          ledStatus = false;
-          digitalWrite(27, ledStatus);                
+          ledStatus4 = false;
+          digitalWrite(27, ledStatus4);                
         }
         if (currentLine.endsWith("GET /LT")) {
-          ledStatus = true;
-          digitalWrite(13, ledStatus);
-          digitalWrite(12, ledStatus);
-          digitalWrite(14, ledStatus);
-          digitalWrite(27, ledStatus);               
+          ledStatusT = true;
+          digitalWrite(13, ledStatusT);
+          digitalWrite(12, ledStatusT);
+          digitalWrite(14, ledStatusT);
+          digitalWrite(27, ledStatusT);               
         }
         if (currentLine.endsWith("GET /AT")) {
-          ledStatus = false;
-          digitalWrite(13, ledStatus);
-          digitalWrite(12, ledStatus);
-          digitalWrite(14, ledStatus);
-          digitalWrite(27, ledStatus);                
+          ledStatusT = false;
+          digitalWrite(13, ledStatusT);
+          digitalWrite(12, ledStatusT);
+          digitalWrite(14, ledStatusT);
+          digitalWrite(27, ledStatusT);                
         }
       }
     }
